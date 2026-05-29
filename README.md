@@ -229,17 +229,19 @@ All API endpoints are prefixed with `/v1` for versioning.
 
 **Interactive API Documentation:**
 - Local: `http://localhost:3000/api/docs`
-- Production: [https://nonso-eze.github.io/Brain-Storm/](https://nonso-eze.github.io/Brain-Storm/) (to be deployed)
+- Production: [https://nonso-eze.github.io/Brain-Storm/](https://nonso-eze.github.io/Brain-Storm/)
 
 ---
 
 ## CI/CD
 
-GitHub Actions workflows in `.github/workflows/ci.yml` run on every push and PR:
+GitHub Actions workflows in `.github/workflows/` run on every push and PR:
 
-- **Backend**: install → build → test
-- **Frontend**: install → build
+- **Backend**: install → build → test → lint
+- **Frontend**: install → build → lint
 - **Contracts**: `cargo test` → `cargo fmt --check` → `cargo clippy`
+- **API Docs**: auto-deploy Swagger UI to GitHub Pages on push to `main`
+- **Release**: semantic versioning via release-please, auto-generated `CHANGELOG.md`
 
 ---
 

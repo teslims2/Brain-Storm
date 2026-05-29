@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 export default function CoursesPage() {
   const t = useTranslations('courses');
@@ -11,7 +12,8 @@ export default function CoursesPage() {
   ];
 
   return (
-    <main className="max-w-4xl mx-auto p-8">
+    <ProtectedRoute>
+      <main className="max-w-4xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{t('title')}</h1>
       {/* List semantics so screen readers announce item count */}
       <ul className="grid gap-4 list-none p-0">
@@ -37,18 +39,26 @@ export default function CoursesPage() {
               aria-label={t('viewCourseLabel', { title: course.title })}
               className="mt-3 inline-block text-blue-700 dark:text-blue-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
             >
-              {t('viewCourse')}
-            </Link>
-          </li>
-        ))}
-      </ul>
-              className="mt-3 inline-block text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              {t('viewCourse')}
-            </Link>
-          </div>
-        ))}
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{course.title}</h2>
+              <p className="text-gray-700 dark:text-gray-400 mt-1">
+                {t(`levels.${course.level}`)} · {course.duration}
+              </p>
+              <Link
+                href={`/courses/${course.id}`}
+                aria-label={t('viewCourseLabel', { title: course.title })}
+                className="mt-3 inline-block text-blue-700 dark:text-blue-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+              >
+                {t('viewCourse')}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </main>
+    </ProtectedRoute>
+  );
+}
       </div>
     </main>
+    </ProtectedRoute>
   );
 }

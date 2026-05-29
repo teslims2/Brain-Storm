@@ -23,6 +23,10 @@ export const validationSchema = Joi.object({
   STELLAR_SECRET_KEY: Joi.string().required(),
   SOROBAN_RPC_URL: Joi.string().uri().default('https://soroban-testnet.stellar.org'),
   SOROBAN_CONTRACT_ID: Joi.string().allow('').default(''),
+  ANALYTICS_CONTRACT_ID: Joi.string().allow('').default(''),
+  TOKEN_CONTRACT_ID: Joi.string().allow('').default(''),
+  INDEXER_POLL_INTERVAL_MS: Joi.number().default(5000),
+  STELLAR_WEB_AUTH_DOMAIN: Joi.string().default('localhost'),
 
   // Mail
   EMAIL_HOST: Joi.string().required(),
@@ -46,4 +50,7 @@ export const validationSchema = Joi.object({
   // Throttle
   THROTTLE_TTL: Joi.number().default(60000),
   THROTTLE_LIMIT: Joi.number().default(100),
+
+  // KYC
+  KYC_PROVIDER_API_KEY: Joi.string().allow('').default(''),
 });

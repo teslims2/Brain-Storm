@@ -23,6 +23,10 @@ export default () => ({
     secretKey: process.env.STELLAR_SECRET_KEY!,
     sorobanRpcUrl: process.env.SOROBAN_RPC_URL || 'https://soroban-testnet.stellar.org',
     contractId: process.env.SOROBAN_CONTRACT_ID || '',
+    analyticsContractId: process.env.ANALYTICS_CONTRACT_ID || '',
+    tokenContractId: process.env.TOKEN_CONTRACT_ID || '',
+    indexerPollIntervalMs: parseInt(process.env.INDEXER_POLL_INTERVAL_MS || '5000', 10),
+    webAuthDomain: process.env.STELLAR_WEB_AUTH_DOMAIN || 'localhost',
   },
 
   mail: {
@@ -49,5 +53,9 @@ export default () => ({
   throttle: {
     ttl: parseInt(process.env.THROTTLE_TTL || '60000', 10),
     limit: parseInt(process.env.THROTTLE_LIMIT || '100', 10),
+  },
+
+  kyc: {
+    providerApiKey: process.env.KYC_PROVIDER_API_KEY || '',
   },
 });
