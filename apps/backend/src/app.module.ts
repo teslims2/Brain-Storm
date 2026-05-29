@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { SentryModule } from '@sentry/nestjs/setup';
 import { AuthModule } from './auth/auth.module';
 import { CoursesModule } from './courses/courses.module';
 import { UsersModule } from './users/users.module';
@@ -14,6 +15,9 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { LoggerModule } from './common/logger';
 import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
+import { KycModule } from './kyc/kyc.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { ForumsModule } from './forums/forums.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import configuration from './config/configuration';
@@ -21,6 +25,7 @@ import { validationSchema } from './config/validation.schema';
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
@@ -72,9 +77,12 @@ import { validationSchema } from './config/validation.schema';
     StellarModule,
     ProgressModule,
     CredentialsModule,
+    LeaderboardModule,
+    ForumsModule,
     NotificationsModule,
     HealthModule,
     MetricsModule,
+    KycModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

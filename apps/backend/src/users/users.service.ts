@@ -19,6 +19,10 @@ export class UsersService {
     return this.repo.findOne({ where: { id } });
   }
 
+  findByStellarPublicKey(stellarPublicKey: string) {
+    return this.repo.findOne({ where: { stellarPublicKey } });
+  }
+
   create(data: Partial<User>) {
     return this.repo.save(this.repo.create(data));
   }

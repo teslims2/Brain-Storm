@@ -53,6 +53,19 @@ export class StellarService {
     return account.balances;
   }
 
+  async fundTestnetAccount(publicKey: string): Promise<{ message: string }> {
+    const network = this.configService.get<string>('stellar.network');
+    if (network !== 'testnet') {
+      throw new Error('Friendbot is only available on testnet');
+    }
+    const response = await fetch(`https://friendbot.stellar.org?addr=${encodeURIComponent(publicKey)}`);
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(`Friendbot error: ${body}`);
+    }
+    return { message: `Account ${publicKey} funded successfully` };
+  }
+
   private async retryWithBackoff<T>(
     fn: () => Promise<T>,
     attempt: number = 1,
