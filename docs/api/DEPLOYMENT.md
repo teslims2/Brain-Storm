@@ -108,6 +108,10 @@ Once deployed, the API documentation will be available at:
 - **Production**: https://nonso-eze.github.io/Brain-Storm/
 - **Local**: http://localhost:3000/api/docs
 
+For developer reference, use:
+- `docs/api/README.md` for detailed API reference and examples
+- `docs/api/CHANGELOG.md` for API change history
+
 ## Updating Documentation
 
 Documentation updates automatically when:

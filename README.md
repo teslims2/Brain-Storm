@@ -216,7 +216,7 @@ See `.env.example` for the full list. Key variables:
 
 ## API Endpoints
 
-All API endpoints are prefixed with `/v1` for versioning.
+All API endpoints are prefixed with `/v1` for versioning. For full API details, request/response examples, authentication guidance, and an error code reference, see `docs/api/README.md`.
 
 | Method | Path | Description |
 |---|---|---|
@@ -229,7 +229,10 @@ All API endpoints are prefixed with `/v1` for versioning.
 
 **Interactive API Documentation:**
 - Local: `http://localhost:3000/api/docs`
+- Static documentation: `docs/api/swagger-ui.html`
 - Production: [https://nonso-eze.github.io/Brain-Storm/](https://nonso-eze.github.io/Brain-Storm/) (to be deployed)
+
+**API changelog:** `docs/api/CHANGELOG.md`
 
 ---
 
