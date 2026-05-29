@@ -1,0 +1,83 @@
+groups:
+  - name: brain-storm-backend
+    interval: 30s
+    rules:
+      # High HTTP error rate (5xx)
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status_code=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High HTTP 5xx error rate"
+          description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes."
+
+      # Slow HTTP responses (p95 > 1s)
+      - alert: SlowHttpResponses
+        expr: |
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))
+          > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow HTTP responses on {{ $labels.route }}"
+          description: "p95 latency is {{ $value }}s on route {{ $labels.route }}."
+
+      # Slow Stellar RPC calls (p95 > 2s)
+      - alert: SlowStellarRpc
+        expr: |
+          histogram_quantile(0.95, sum(rate(stellar_rpc_latency_seconds_bucket[5m])) by (le, method))
+          > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow Stellar RPC: {{ $labels.method }}"
+          description: "Stellar RPC p95 latency is {{ $value }}s for method {{ $labels.method }}."
+
+      # High memory usage (heap > 400MB)
+      - alert: HighMemoryUsage
+        expr: nodejs_heap_size_used_bytes > 400 * 1024 * 1024
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Node.js heap memory usage"
+          description: "Heap usage is {{ $value | humanize1024 }}B."
+
+      # Event loop lag > 100ms
+      - alert: HighEventLoopLag
+        expr: nodejs_eventloop_lag_seconds > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Node.js event loop lag"
+          description: "Event loop lag is {{ $value }}s."
+
+      # Service down (no scrape data)
+      - alert: ServiceDown
+        expr: up{job="brain-storm-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Brain-Storm backend is down"
+          description: "The backend service has been unreachable for more than 1 minute."
+
+      # High authentication failure rate
+      - alert: HighAuthFailureRate
+        expr: |
+          sum(rate(auth_attempts_total{status="failure"}[5m]))
+          /
+          sum(rate(auth_attempts_total[5m])) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High authentication failure rate"
+          description: "Auth failure rate is {{ $value | humanizePercentage }}."
