@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { CoursesModule } from './courses/courses.module';
 import { UsersModule } from './users/users.module';
@@ -14,6 +14,8 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { LoggerModule } from './common/logger';
 import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
+import { MetricsInterceptor } from './metrics/metrics.interceptor';
+import { TracingModule } from './tracing';
 import * as redisStore from 'cache-manager-redis-store';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import configuration from './config/configuration';
@@ -66,6 +68,7 @@ import { validationSchema } from './config/validation.schema';
         storage: new ThrottlerStorageRedisService(config.get<string>('redis.url') || 'redis://localhost:6379'),
       }),
     }),
+    LoggerModule,
     AuthModule,
     CoursesModule,
     UsersModule,
@@ -75,7 +78,11 @@ import { validationSchema } from './config/validation.schema';
     NotificationsModule,
     HealthModule,
     MetricsModule,
+    TracingModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor },
+  ],
 })
 export class AppModule {}

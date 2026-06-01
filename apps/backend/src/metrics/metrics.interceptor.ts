@@ -15,14 +15,14 @@ export class MetricsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
+    const startTime = Date.now();
 
     return next.handle().pipe(
       tap(() => {
-        this.metricsService.incrementHttpRequests(
-          request.method,
-          request.route?.path || request.url,
-          response.statusCode,
-        );
+        const route = request.route?.path || request.url;
+        const durationSeconds = (Date.now() - startTime) / 1000;
+        this.metricsService.incrementHttpRequests(request.method, route, response.statusCode);
+        this.metricsService.observeHttpDuration(request.method, route, response.statusCode, durationSeconds);
       }),
     );
   }

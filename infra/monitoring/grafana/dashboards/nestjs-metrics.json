@@ -1,70 +1,132 @@
 {
-  "dashboard": {
-    "title": "Brain Storm - NestJS Metrics",
-    "tags": ["nestjs", "brain-storm"],
-    "timezone": "browser",
-    "panels": [
-      {
-        "id": 1,
-        "title": "HTTP Requests Total",
-        "type": "graph",
-        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
-        "targets": [
-          {
-            "expr": "rate(http_requests_total[5m])",
-            "legendFormat": "{{method}} {{route}} - {{status_code}}"
-          }
-        ]
-      },
-      {
-        "id": 2,
-        "title": "Credentials Issued",
-        "type": "stat",
-        "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
-        "targets": [
-          {
-            "expr": "credential_issued_total",
-            "legendFormat": "{{credential_type}}"
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "title": "BST Tokens Minted",
-        "type": "stat",
-        "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
-        "targets": [
-          {
-            "expr": "bst_minted_total"
-          }
-        ]
-      },
-      {
-        "id": 4,
-        "title": "Stellar RPC Latency (p95)",
-        "type": "graph",
-        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
-        "targets": [
-          {
-            "expr": "histogram_quantile(0.95, rate(stellar_rpc_latency_seconds_bucket[5m]))",
-            "legendFormat": "{{method}} - {{status}}"
-          }
-        ]
-      },
-      {
-        "id": 5,
-        "title": "Node.js Memory Usage",
-        "type": "graph",
-        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
-        "targets": [
-          {
-            "expr": "process_resident_memory_bytes",
-            "legendFormat": "Memory"
-          }
-        ]
-      }
-    ],
-    "schemaVersion": 16,
-    "version": 1
-  }
+  "uid": "nestjs-metrics",
+  "title": "Brain-Storm - NestJS Metrics",
+  "tags": ["nestjs", "brain-storm"],
+  "timezone": "browser",
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "version": 2,
+  "panels": [
+    {
+      "id": 1,
+      "title": "HTTP Requests Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total[5m])) by (method, route, status_code)",
+          "legendFormat": "{{method}} {{route}} {{status_code}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 2,
+      "title": "Credentials Issued",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(credential_issued_total)",
+          "legendFormat": "Total"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "BST Tokens Minted",
+      "type": "stat",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(bst_minted_total)",
+          "legendFormat": "Total"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Course Enrollments",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 4, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(enrollments_total)",
+          "legendFormat": "Total"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Course Completions",
+      "type": "stat",
+      "gridPos": { "x": 18, "y": 4, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "sum(course_completions_total)",
+          "legendFormat": "Total"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Stellar RPC Latency p95 (s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(stellar_rpc_latency_seconds_bucket[5m])) by (le, method))",
+          "legendFormat": "{{method}} p95"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 7,
+      "title": "Node.js Memory Usage",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "nodejs_heap_size_used_bytes",
+          "legendFormat": "Heap Used"
+        },
+        {
+          "expr": "process_resident_memory_bytes",
+          "legendFormat": "RSS"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "id": 8,
+      "title": "Auth Attempts",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(auth_attempts_total{status=\"success\"}[5m])) by (type)",
+          "legendFormat": "{{type}} success"
+        },
+        {
+          "expr": "sum(rate(auth_attempts_total{status=\"failure\"}[5m])) by (type)",
+          "legendFormat": "{{type}} failure"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 9,
+      "title": "HTTP p95 Latency by Route (s)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))",
+          "legendFormat": "{{route}} p95"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    }
+  ]
 }
